@@ -110,50 +110,7 @@ Works perfectly on:
 
 ---
 
-## 📚 Documentation
-
-This project comes with comprehensive guides:
-
-### 🚀 **[QUICK_START.md](QUICK_START.md)** - Get Started in 30 Seconds
-- 30-second setup
-- 5-minute full setup
-- Feature overview
-- Keyboard shortcuts
-- Common tasks
-- Troubleshooting
-
-### 🎬 **[STREAMING_FEATURES.md](STREAMING_FEATURES.md)** - Complete Feature Guide
-- All new features explained
-- Component architecture
-- How to use each feature
-- Customization options
-- Styling and theming
-- Local storage API reference
-
-### 🔌 **[VIDKING_INTEGRATION.md](VIDKING_INTEGRATION.md)** - Add Real Streaming
-- Get VidKing API credentials
-- Configure streaming sources
-- Video player integration
-- Advanced features (subtitles, quality, regions)
-- Error handling
-- Performance optimization
-
-### 🚀 **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Launch Your Platform
-- Deployment options (GitHub Pages, Netlify, Vercel, Self-hosted)
-- Pre-launch checklist
-- Performance optimization
-- Security & privacy setup
-- Analytics integration
-- Troubleshooting guide
-
-### 📊 **[UPGRADE_SUMMARY.md](UPGRADE_SUMMARY.md)** - What Changed
-- Before & after comparison
-- Key upgrades explained
-- Technical changes
-- Version history
-- Next steps for development
-
----
+## 📚 [Documentation](Documentation.md)
 
 ## 🔧 Tech Stack
 
