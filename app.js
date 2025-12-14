@@ -323,8 +323,44 @@ const getStreamingSources = async (movieTitle, movieYear, tmdbId) => {
 
 // --- Components ---
 // Enhanced MovieCard with streaming features
-const MovieCard = ({ movie, onPlay, onAddToWatchlist, isInWatchlist, isWatched }) => {
+const MovieCard = ({ movie, onPlay, onAddToWatchlist, isInWatchlist, isWatched, compact = false }) => {
   const watchedDetails = isWatched ? LocalStorage.getWatchedDetails(movie.id) : null;
+  
+  // Compact view for watchlist
+  if (compact) {
+    return (
+      <div className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-purple-500/40 border border-gray-700 relative">
+        <div className="relative group cursor-pointer">
+          <img
+            src={movie.poster_path ? `${TMDB_IMAGE_BASE_URL}${movie.poster_path}` : `https://placehold.co/500x750/333333/FFFFFF?text=No+Image`}
+            alt={movie.title}
+            className="w-full h-64 object-cover object-center rounded-t-xl"
+            onClick={() => onPlay(movie)}
+            onError={(e) => { e.target.src = `https://placehold.co/500x750/333333/FFFFFF?text=No+Image`; }}
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-t-xl">
+            <button
+              onClick={() => onPlay(movie)}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110"
+            >
+              <i className="fas fa-play mr-2"></i> Watch
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-4">
+          <h2 className="text-lg font-bold text-purple-300 mb-3">{movie.title}</h2>
+          <button
+            onClick={() => onAddToWatchlist(movie)}
+            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg transition-all flex items-center justify-center"
+            title="Remove from watchlist"
+          >
+            <i className="fas fa-trash mr-2"></i> Remove
+          </button>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-purple-500/40 border border-gray-700 relative">
@@ -400,7 +436,7 @@ const MovieCard = ({ movie, onPlay, onAddToWatchlist, isInWatchlist, isWatched }
 };
 
 // Video Player Component - INTEGRATED WITH VIDKING
-const VideoPlayer = ({ movie, onClose, onMarkAsWatched }) => {
+const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWatchlist }) => {
   const { useState, useEffect, useRef } = React;
   const videoRef = useRef(null);
   const [streamingSources, setStreamingSources] = useState(null);
@@ -539,6 +575,16 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched }) => {
                 className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center"
               >
                 <i className="fas fa-check mr-2"></i> Mark as Watched & Close
+              </button>
+              <button
+                onClick={() => onAddToWatchlist(movie)}
+                className={`font-bold py-2 px-6 rounded-lg transition-colors flex items-center ${
+                  isInWatchlist
+                    ? 'bg-pink-600 hover:bg-pink-700 text-white'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+              >
+                <i className={`${isInWatchlist ? 'fas' : 'far'} fa-heart mr-2`}></i> {isInWatchlist ? 'Remove from Favorites' : 'Add to Favorites'}
               </button>
               <button
                 onClick={onClose}
@@ -727,6 +773,7 @@ const WatchlistModal = ({ isOpen, onClose, watchlist, onPlay, onAddToWatchlist }
                   onAddToWatchlist={onAddToWatchlist}
                   isInWatchlist={true}
                   isWatched={LocalStorage.isWatched(movie.id)}
+                  compact={true}
                 />
               ))}
             </div>
@@ -923,6 +970,8 @@ const App = () => {
 
   const handlePlayMovie = (movie) => {
     setSelectedMovie(movie);
+    setShowWatchlistModal(false);
+    setShowSearchModal(false);
   };
 
   const handleAddToWatchlist = (movie) => {
@@ -938,6 +987,11 @@ const App = () => {
   const handleMarkAsWatched = (movie) => {
     LocalStorage.addToWatched(movie);
     setWatched(LocalStorage.getWatched());
+    // Remove from watchlist when marked as watched
+    if (LocalStorage.isInWatchlist(movie.id)) {
+      LocalStorage.removeFromWatchlist(movie.id);
+      setWatchlist(LocalStorage.getWatchlist());
+    }
   };
 
   const handleSearchResult = (movie) => {
@@ -974,6 +1028,8 @@ const App = () => {
             handleMarkAsWatched(selectedMovie);
             setSelectedMovie(null);
           }}
+          onAddToWatchlist={handleAddToWatchlist}
+          isInWatchlist={LocalStorage.isInWatchlist(selectedMovie.id)}
         />
       )}
 
