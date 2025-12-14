@@ -602,43 +602,58 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
 
 // Navigation Component
 const Navigation = ({ currentView, onViewChange, watchlistCount, onSearch, onWatchlist }) => {
+  const { useState } = React;
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
-    <nav className="bg-gray-900 border-b border-gray-800 p-4 sticky top-0 z-40">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-          BEBU'S STREAMING ZONE
-        </h1>
-        <div className="flex gap-4">
-          <button
-            onClick={() => onViewChange('browse')}
-            className={`px-4 py-2 rounded-lg font-bold transition-colors ${
-              currentView === 'browse'
-                ? 'bg-purple-600 text-white'
-                : 'text-gray-300 hover:text-white hover:bg-gray-800'
-            }`}
-          >
-            <i className="fas fa-film mr-2"></i> Browse
-          </button>
-          <button
-            onClick={onWatchlist}
-            className={`px-4 py-2 rounded-lg font-bold transition-colors relative text-gray-300 hover:text-white hover:bg-gray-800`}
-          >
-            <i className="fas fa-heart mr-2"></i> Watchlist
-            {watchlistCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
-                {watchlistCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={onSearch}
-            className={`px-4 py-2 rounded-lg font-bold transition-colors text-gray-300 hover:text-white hover:bg-gray-800`}
-          >
-            <i className="fas fa-search mr-2"></i> Search
-          </button>
-        </div>
-      </div>
-    </nav>
+    <div className="fixed bottom-8 right-8 z-40 flex flex-col items-end gap-3">
+      {/* Browse Button */}
+      {isExpanded && (
+        <button
+          onClick={() => {
+            onViewChange('browse');
+            setIsExpanded(false);
+          }}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110 flex items-center gap-2 whitespace-nowrap"
+        >
+          <i className="fas fa-film"></i> Browse
+        </button>
+      )}
+
+      {/* Watchlist Button */}
+      {isExpanded && (
+        <button
+          onClick={onWatchlist}
+          className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110 flex items-center gap-2 whitespace-nowrap relative"
+        >
+          <i className="fas fa-heart"></i> Watchlist
+          {watchlistCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {watchlistCount}
+            </span>
+          )}
+        </button>
+      )}
+
+      {/* Search Button */}
+      {isExpanded && (
+        <button
+          onClick={onSearch}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110 flex items-center gap-2 whitespace-nowrap"
+        >
+          <i className="fas fa-search"></i> Search
+        </button>
+      )}
+
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-4 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-110 w-16 h-16 flex items-center justify-center text-2xl"
+        title="Toggle menu"
+      >
+        <i className={`fas fa-${isExpanded ? 'times' : 'bars'} transition-transform duration-300`}></i>
+      </button>
+    </div>
   );
 };
 
@@ -1000,7 +1015,46 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-gray-900 text-white" style={{ backgroundImage: 'url(BG.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+      {/* Hero Section with Overlay */}
+      <div className="relative bg-black bg-opacity-40 flex items-center justify-center border-b-4 border-purple-600 p-4" style={{ minHeight: 'fit-content' }}>
+        <div className="w-full border-4 border-purple-500 rounded-2xl p-8 md:p-12 bg-black bg-opacity-60 backdrop-blur-sm shadow-2xl" style={{ boxShadow: '0 0 40px rgba(168, 85, 247, 0.6), inset 0 0 20px rgba(168, 85, 247, 0.2)' }}>
+          {/* Logo and Tagline */}
+          <div className="text-center mb-8 pb-8 border-b-2 border-purple-500">
+            <img src="Logo no BG.png" alt="BEBU's Logo" className="h-40 md:h-56 mx-auto mb-6 drop-shadow-2xl" />
+            <p className="text-gray-300 text-lg md:text-2xl font-light leading-relaxed">
+              Your Ultimate Movie Experience - Discover, Watch & Manage Your Collection
+            </p>
+          </div>
+
+          {/* December's Pick and Genres */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left Side - December's Pick */}
+            <div>
+              <h2 className="text-3xl font-bold mb-2">{currentMonthName}'s Pick: {currentMonthGenreName}</h2>
+              <p className="text-gray-400 text-lg italic">"{currentMonthGenreReason}"</p>
+            </div>
+
+            {/* Right Side - Genre Buttons */}
+            <div className="flex flex-wrap gap-2 items-start content-start">
+              {genres.map((genre) => (
+                <button
+                  key={genre.id}
+                  onClick={() => handleGenreChange(genre.id)}
+                  className={`px-4 py-2 rounded-lg font-bold transition-all ${
+                    selectedGenreId === genre.id
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  {genre.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <Navigation 
         currentView={currentView} 
         onViewChange={setCurrentView} 
@@ -1013,7 +1067,7 @@ const App = () => {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-40 bg-purple-600 hover:bg-purple-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+          className="fixed bottom-8 left-8 z-40 bg-purple-600 hover:bg-purple-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
           title="Back to top"
         >
           <i className="fas fa-arrow-up text-xl"></i>
@@ -1049,26 +1103,6 @@ const App = () => {
 
       <main className="p-4 sm:p-8 w-full">
         <div className="w-full">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-4">{currentMonthName}'s Pick: {currentMonthGenreName}</h2>
-            <p className="text-gray-400 text-lg italic">"{currentMonthGenreReason}"</p>
-          </div>
-
-          <div className="mb-8 flex flex-wrap gap-2">
-            {genres.map((genre) => (
-              <button
-                key={genre.id}
-                onClick={() => handleGenreChange(genre.id)}
-                className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                  selectedGenreId === genre.id
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                {genre.name}
-              </button>
-            ))}
-          </div>
 
           {loading && (
             <p className="text-center text-purple-300 text-xl animate-pulse">Loading movies...</p>
