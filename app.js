@@ -363,8 +363,8 @@ const MovieCard = ({ movie, onPlay, onAddToWatchlist, isInWatchlist, isWatched, 
   }
   
   return (
-    <div className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-purple-500/40 border border-gray-700 relative">
-      <div className="relative group">
+    <div className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-purple-500/40 border border-gray-700 relative flex flex-col h-full">
+      <div className="relative group flex-shrink-0">
         <img
           src={movie.poster_path ? `${TMDB_IMAGE_BASE_URL}${movie.poster_path}` : `https://placehold.co/500x750/333333/FFFFFF?text=No+Image`}
           alt={movie.title}
@@ -401,17 +401,17 @@ const MovieCard = ({ movie, onPlay, onAddToWatchlist, isInWatchlist, isWatched, 
         )}
       </div>
       
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-purple-300 mb-2">{movie.title}</h2>
-        <p className="text-gray-400 text-sm mb-4 line-clamp-3">{movie.overview}</p>
-        <div className="flex justify-between items-center mb-4">
+      <div className="p-6 flex flex-col flex-grow">
+        <h2 className="text-2xl font-bold text-purple-300 mb-2 line-clamp-2">{movie.title}</h2>
+        <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-grow">{movie.overview}</p>
+        <div className="flex justify-between items-center mb-4 flex-shrink-0">
           <span className="text-yellow-400 font-semibold text-lg flex items-center">
             <i className="fas fa-star mr-1"></i>
             {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'} / 10
           </span>
           <span className="text-gray-400 text-sm">{movie.release_date || 'N/A'}</span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-shrink-0">
           <button
             onClick={() => onPlay(movie)}
             className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105"
