@@ -9,14 +9,14 @@
 
 1. [Overview](#overview)
 2. [Streaming Features](#streaming-features)
-3. [VidLink Integration](#vidlink-integration)
-4. [Manual Provider Switching](#manual-provider-switching)
-5. [Local Storage & Watchlist](#local-storage--watchlist)
-6. [Quick Start Guide](#quick-start-guide)
-7. [Code Implementation](#code-implementation)
-8. [Customization](#customization)
-9. [Deployment Guide](#deployment-guide)
-10. [Testing & Troubleshooting](#testing--troubleshooting)
+3. [Streaming Provider Integration](#streaming-provider-integration)
+5. [Manual Provider Switching](#manual-provider-switching)
+6. [Local Storage & Watchlist](#local-storage--watchlist)
+7. [Quick Start Guide](#quick-start-guide)
+8. [Code Implementation](#code-implementation)
+9. [Customization](#customization)
+10. [Deployment Guide](#deployment-guide)
+11. [Testing & Troubleshooting](#testing--troubleshooting)
 
 ---
 
@@ -70,11 +70,25 @@ BEBU Streaming Zone has been upgraded from a movie recommendation engine into a 
 
 ---
 
-# VidLink Integration
+# Streaming Provider Integration
 
-## What is VidLink?
+## Overview
 
-VidLink is a **fallback streaming provider** that activates when VidKing is offline. It provides:
+BEBU Streaming Zone supports dual streaming providers: **VidKing** and **VidLink**. VidKing is the primary provider, offering fast loading and reliable 1080p streaming. VidLink acts as a fallback provider, activating when VidKing is offline and providing additional features like watch progress tracking and player customization.
+
+### VidKing (Primary Provider)
+VidKing offers:
+- 1080p streaming quality
+- Fast loading times
+- Reliable content delivery
+
+#### URL Structure
+```
+https://www.vidking.net/embed/movie/{tmdbId}
+```
+
+### VidLink (Fallback Provider)
+VidLink activates when VidKing is offline and provides:
 - 1080p streaming quality
 - Full player customization
 - Automatic watch progress tracking
@@ -82,9 +96,7 @@ VidLink is a **fallback streaming provider** that activates when VidKing is offl
 - External subtitle support
 - Next episode button for TV shows
 
-## Configuration
-
-### Player Colors (Neon Purple Theme)
+#### Player Colors (Neon Purple Theme)
 ```javascript
 const VIDLINK_PLAYER_CONFIG = {
   primaryColor: '9D00FF',      // Neon Purple
@@ -98,7 +110,7 @@ const VIDLINK_PLAYER_CONFIG = {
 };
 ```
 
-### URL Structure
+#### URL Structure
 ```
 https://vidlink.pro/movie/{tmdbId}?{customization_parameters}
 ```
@@ -106,6 +118,7 @@ https://vidlink.pro/movie/{tmdbId}?{customization_parameters}
 ## How It Works
 
 ### Availability Detection
+Both providers' availability is checked automatically:
 ```javascript
 const isVidkingOnline = async () => {
   try {
@@ -121,6 +134,7 @@ const isVidkingOnline = async () => {
 ```
 
 ### Provider Selection Logic
+The platform intelligently selects the best available provider:
 ```
 1. Check if VidKing is online
 2. If ONLINE → VidKing as primary, VidLink as backup
@@ -128,7 +142,7 @@ const isVidkingOnline = async () => {
 4. User can manually override either provider
 ```
 
-## URL Building
+## VidLink URL Building
 
 VidLink URLs are built with customization parameters:
 ```javascript
@@ -150,7 +164,7 @@ const buildVidLinkUrl = (tmdbId, customParams = {}) => {
 };
 ```
 
-## Watch Progress Tracking
+## Watch Progress Tracking (VidLink Only)
 
 ### How It Works
 VidLink sends `MEDIA_DATA` events that are automatically saved:
@@ -189,7 +203,7 @@ window.addEventListener('message', (event) => {
 localStorage.setItem('vidLinkProgress', JSON.stringify(mediaData));
 ```
 
-## Player Events
+## Player Events (VidLink Only)
 
 ### Event Types Tracked
 - **play** - Video starts playing
@@ -1120,6 +1134,7 @@ localStorage.getItem('streamingSources')
 ## Summary
 
 ✅ **VidLink Integration** - Fallback provider when VidKing offline  
+✅ **VidKing Integration** - Primary provider with fast loading  
 ✅ **Manual Switching** - Users can choose their provider  
 ✅ **Auto Fallback** - Seamless switching when needed  
 ✅ **Watch Progress** - Auto-saved with VidLink  

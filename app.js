@@ -586,8 +586,8 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
   const currentSource = availableSources.length > 0 ? availableSources[Math.min(selectedSource, availableSources.length - 1)] : null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 overflow-auto">
-      <div className="w-full max-w-4xl mx-auto relative p-4 my-8">
+    <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4">
+      <div className="w-full max-w-7xl max-h-[92vh] relative flex flex-col">
         <button
           onClick={onClose}
           className="absolute -top-10 right-0 text-white font-bold text-2xl hover:text-purple-400 transition-colors z-10"
@@ -595,13 +595,15 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
           <i className="fas fa-times"></i>
         </button>
         
-        <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700">
-          {/* Video Player Area */}
-          <div className="relative bg-black min-h-96 flex items-center justify-center">
+        <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700 flex flex-col h-full">
+          {/* Video Player Area - Floating Look */}
+          <div className="relative bg-black flex-shrink-0 mx-4 my-4 rounded-lg overflow-hidden" style={{ height: '280px', width: 'calc(100% - 32px)', boxShadow: '0 0 30px rgba(168, 85, 247, 0.4)' }}>
             {loading ? (
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                <p className="text-gray-300">Loading player...</p>
+              <div className="text-center h-full flex items-center justify-center">
+                <div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                  <p className="text-gray-300">Loading player...</p>
+                </div>
               </div>
             ) : currentSource ? (
               <div className="w-full h-full">
@@ -610,8 +612,8 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
                   key={`${currentSource.provider}-${selectedSource}`}
                   src={currentSource.embedUrl || currentSource.url}
                   width="100%"
-                  height="600"
-                  frameBorder="0"
+                  height="100%"
+                  frameBorder="0"   
                   allowFullScreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   style={{ display: 'block' }}
@@ -619,56 +621,73 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
                 ></iframe>
               </div>
             ) : (
-              <div className="text-center text-gray-400 p-8">
-                <i className="fas fa-exclamation-triangle text-3xl mb-4 block text-yellow-500"></i>
-                <p>No streaming sources found for this movie.</p>
-                <p className="text-sm mt-2">Use the links below to search for it on other platforms.</p>
+              <div className="text-center text-gray-400 p-8 h-full flex items-center justify-center">
+                <div>
+                  <i className="fas fa-exclamation-triangle text-3xl mb-4 block text-yellow-500"></i>
+                  <p>No streaming sources found for this movie.</p>
+                  <p className="text-sm mt-2">Use the links below to search for it on other platforms.</p>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Movie Info and Streaming Options */}
-          <div className="p-6 bg-gray-800">
-            <h1 className="text-3xl font-bold text-white mb-2">{movie.title}</h1>
-            <p className="text-gray-400 text-sm mb-4">TMDB ID: {movie.id} | Year: {movie.release_date?.split('-')[0]}</p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
-              <div>
-                <p className="text-gray-400 text-sm">Rating</p>
-                <p className="text-yellow-400 font-bold text-lg">{movie.vote_average?.toFixed(1)} / 10</p>
+          {/* Movie Info Section - Larger */}
+          <div className="p-6 bg-gray-800 flex-1 overflow-y-auto">
+            {/* Poster and Description Side by Side - Bigger */}
+            <div className="flex gap-8 mb-6">
+              <div className="flex-shrink-0 w-48">
+                <img
+                  src={movie.poster_path ? `${TMDB_IMAGE_BASE_URL}${movie.poster_path}` : `https://placehold.co/300x450/333333/FFFFFF?text=No+Image`}
+                  alt={movie.title}
+                  className="w-full h-auto rounded-lg shadow-lg border border-purple-500"
+                />
               </div>
-              <div>
-                <p className="text-gray-400 text-sm">Release</p>
-                <p className="text-white font-bold">{movie.release_date}</p>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm">Popularity</p>
-                <p className="text-white font-bold">{Math.round(movie.popularity)}</p>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm">Language</p>
-                <p className="text-white font-bold">{(movie.original_language || 'EN').toUpperCase()}</p>
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-white mb-2">{movie.title}</h1>
+                <p className="text-gray-400 text-sm mb-4">TMDB ID: {movie.id} | Year: {movie.release_date?.split('-')[0]}</p>
+                
+                <div className="grid grid-cols-4 gap-3 mb-6">
+                  <div className="bg-gray-700 p-3 rounded-lg text-center">
+                    <p className="text-gray-400 text-xs">Rating</p>
+                    <p className="text-yellow-400 font-bold text-lg">{movie.vote_average?.toFixed(1)}</p>
+                  </div>
+                  <div className="bg-gray-700 p-3 rounded-lg text-center">
+                    <p className="text-gray-400 text-xs">Release</p>
+                    <p className="text-white font-bold text-sm">{movie.release_date}</p>
+                  </div>
+                  <div className="bg-gray-700 p-3 rounded-lg text-center">
+                    <p className="text-gray-400 text-xs">Popularity</p>
+                    <p className="text-white font-bold text-sm">{Math.round(movie.popularity)}</p>
+                  </div>
+                  <div className="bg-gray-700 p-3 rounded-lg text-center">
+                    <p className="text-gray-400 text-xs">Language</p>
+                    <p className="text-white font-bold text-sm">{(movie.original_language || 'EN').toUpperCase()}</p>
+                  </div>
+                </div>
+
+                <h3 className="text-lg font-bold text-purple-300 mb-3">📽️ About This Movie:</h3>
+                <p className="text-gray-300 text-base leading-relaxed">{movie.overview || 'No description available.'}</p>
               </div>
             </div>
 
             {/* Streaming Provider Selection */}
             {streamingSources && streamingSources.sources && streamingSources.sources.length > 0 && (
-              <div className="mb-6 p-4 bg-gray-700 rounded-lg border border-purple-500 shadow-lg">
-                <h3 className="text-lg font-bold text-purple-300 mb-4">🎬 Choose Streaming Provider:</h3>
-                <div className="flex flex-wrap gap-3 mb-4">
+              <div className="mb-4 p-4 bg-gray-700 rounded-lg border border-purple-500 shadow-lg">
+                <h3 className="text-sm font-bold text-purple-300 mb-3">🎬 Choose Streaming Provider:</h3>
+                <div className="flex flex-wrap gap-2 mb-3">
                   {/* Auto Select Button */}
                   <button
                     onClick={() => {
                       setSelectedProvider('auto');
                       setSelectedSource(0);
                     }}
-                    className={`font-bold py-2 px-6 rounded-lg transition-all transform duration-300 hover:scale-105 flex items-center gap-2 ${
+                    className={`font-bold py-2 px-4 text-sm rounded-lg transition-all transform duration-300 hover:scale-105 flex items-center gap-2 ${
                       selectedProvider === 'auto'
                         ? 'bg-purple-600 text-white shadow-lg border border-purple-400'
                         : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
                     }`}
                   >
-                    <i className="fas fa-magic"></i> Auto (Best Available)
+                    <i className="fas fa-magic"></i> Auto
                   </button>
                   
                   {/* VidKing Button */}
@@ -678,7 +697,7 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
                         setSelectedProvider('vidking');
                         setSelectedSource(0);
                       }}
-                      className={`font-bold py-2 px-6 rounded-lg transition-all transform duration-300 hover:scale-105 flex items-center gap-2 ${
+                      className={`font-bold py-2 px-4 text-sm rounded-lg transition-all transform duration-300 hover:scale-105 flex items-center gap-2 ${
                         selectedProvider === 'vidking'
                           ? 'bg-blue-600 text-white shadow-lg border border-blue-400'
                           : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
@@ -695,7 +714,7 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
                         setSelectedProvider('vidlink');
                         setSelectedSource(0);
                       }}
-                      className={`font-bold py-2 px-6 rounded-lg transition-all transform duration-300 hover:scale-105 flex items-center gap-2 ${
+                      className={`font-bold py-2 px-4 text-sm rounded-lg transition-all transform duration-300 hover:scale-105 flex items-center gap-2 ${
                         selectedProvider === 'vidlink'
                           ? 'bg-purple-600 text-white shadow-lg border border-purple-400'
                           : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
@@ -708,75 +727,27 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
 
                 {/* Quality/Source Selection for Selected Provider */}
                 {availableSources.length > 1 && (
-                  <div className="mt-4 pt-4 border-t border-gray-600">
-                    <p className="text-gray-300 text-sm mb-3">📺 Available Quality/Sources:</p>
+                  <div className="mt-3 pt-3 border-t border-gray-600">
+                    <p className="text-gray-300 text-sm mb-2">📺 Available Quality/Sources:</p>
                     <div className="flex flex-wrap gap-2">
                       {availableSources.map((source, idx) => (
                         <button
                           key={idx}
                           onClick={() => setSelectedSource(idx)}
-                          className={`font-bold py-2 px-4 rounded-lg transition-all ${
+                          className={`font-bold py-1 px-3 text-sm rounded-lg transition-all ${
                             idx === selectedSource
                               ? 'bg-yellow-500 text-black'
                               : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
                           }`}
                         >
-                          {source.name} {source.quality && `(${source.quality})`}
-                          {source.isBackup && ' ⭐'}
+                          {source.name} {source.isBackup && ' ⭐'}
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
-
-                {/* Provider Info */}
-                <div className="mt-4 pt-4 border-t border-gray-600 text-sm text-gray-400">
-                  {selectedProvider === 'auto' && <p>✓ Auto mode: System will choose the best available provider</p>}
-                  {selectedProvider === 'vidking' && <p>✓ Now playing from VidKing - Fast & Reliable</p>}
-                  {selectedProvider === 'vidlink' && <p>✓ Now playing from VidLink - Full Features & Auto Progress Tracking</p>}
-                </div>
               </div>
             )}
-
-            {/* Streaming Source Selection */}
-            {streamingSources && streamingSources.sources && streamingSources.sources.length > 0 && (
-              <div className="mb-6 p-4 bg-gray-700 rounded-lg border border-gray-600 hidden">
-                <h3 className="text-lg font-bold text-purple-300 mb-3">▶️ Streaming Source (VidKing):</h3>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {streamingSources.sources.map((source, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSelectedSource(idx)}
-                      className={`font-bold py-2 px-4 rounded-lg transition-all ${
-                        selectedSource === idx
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
-                      }`}
-                    >
-                      {source.name} {source.quality && `(${source.quality})`}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-gray-300 text-sm">✓ Now playing from VidKing with embedded player</p>
-              </div>
-            )}
-
-            {/* Movie Poster and Description */}
-            <div className="mb-6 p-4 bg-gray-700 rounded-lg border border-gray-600">
-              <div className="flex gap-6 flex-col md:flex-row">
-                <div className="md:w-1/4">
-                  <img
-                    src={movie.poster_path ? `${TMDB_IMAGE_BASE_URL}${movie.poster_path}` : `https://placehold.co/300x450/333333/FFFFFF?text=No+Image`}
-                    alt={movie.title}
-                    className="w-full h-auto rounded-lg shadow-lg"
-                  />
-                </div>
-                <div className="md:w-3/4">
-                  <h3 className="text-lg font-bold text-purple-300 mb-3">📽️ About This Movie:</h3>
-                  <p className="text-gray-300 text-base leading-relaxed">{movie.overview || 'No description available.'}</p>
-                </div>
-              </div>
-            </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 flex-wrap">
@@ -797,7 +768,7 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
-                <i className={`${isInWatchlist ? 'fas' : 'far'} fa-heart mr-2`}></i> {isInWatchlist ? 'Remove from Favorites' : 'Add to Favorites'}
+                <i className={`${isInWatchlist ? 'fas' : 'far'} fa-heart mr-2`}></i> {isInWatchlist ? 'Remove' : 'Add to Favorites'}
               </button>
               <button
                 onClick={onClose}
