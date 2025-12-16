@@ -586,18 +586,18 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
   const currentSource = availableSources.length > 0 ? availableSources[Math.min(selectedSource, availableSources.length - 1)] : null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-7xl max-h-[92vh] relative flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-2 md:p-4">
+      <div className="w-full max-w-7xl max-h-[95vh] md:max-h-[92vh] relative flex flex-col">
         <button
           onClick={onClose}
-          className="absolute -top-10 right-0 text-white font-bold text-2xl hover:text-purple-400 transition-colors z-10"
+          className="absolute -top-8 md:-top-10 right-0 text-white font-bold text-xl md:text-2xl hover:text-purple-400 transition-colors z-10"
         >
           <i className="fas fa-times"></i>
         </button>
         
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700 flex flex-col h-full">
           {/* Video Player Area - Floating Look */}
-          <div className="relative bg-black flex-shrink-0 mx-4 my-4 rounded-lg overflow-hidden" style={{ height: '280px', width: 'calc(100% - 32px)', boxShadow: '0 0 30px rgba(168, 85, 247, 0.4)' }}>
+          <div className="relative bg-black flex-shrink-0 mx-2 md:mx-4 my-2 md:my-4 rounded-lg overflow-hidden md:h-80" style={{ height: '180px', width: 'calc(100% - 16px)', boxShadow: '0 0 30px rgba(168, 85, 247, 0.4)' }}>
             {loading ? (
               <div className="text-center h-full flex items-center justify-center">
                 <div>
@@ -631,43 +631,32 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
             )}
           </div>
 
-          {/* Movie Info Section - Larger */}
-          <div className="p-6 bg-gray-800 flex-1 overflow-y-auto">
-            {/* Poster and Description Side by Side - Bigger */}
-            <div className="flex gap-8 mb-6">
-              <div className="flex-shrink-0 w-48">
-                <img
-                  src={movie.poster_path ? `${TMDB_IMAGE_BASE_URL}${movie.poster_path}` : `https://placehold.co/300x450/333333/FFFFFF?text=No+Image`}
-                  alt={movie.title}
-                  className="w-full h-auto rounded-lg shadow-lg border border-purple-500"
-                />
-              </div>
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-white mb-2">{movie.title}</h1>
-                <p className="text-gray-400 text-sm mb-4">TMDB ID: {movie.id} | Year: {movie.release_date?.split('-')[0]}</p>
-                
-                <div className="grid grid-cols-4 gap-3 mb-6">
-                  <div className="bg-gray-700 p-3 rounded-lg text-center">
-                    <p className="text-gray-400 text-xs">Rating</p>
-                    <p className="text-yellow-400 font-bold text-lg">{movie.vote_average?.toFixed(1)}</p>
-                  </div>
-                  <div className="bg-gray-700 p-3 rounded-lg text-center">
-                    <p className="text-gray-400 text-xs">Release</p>
-                    <p className="text-white font-bold text-sm">{movie.release_date}</p>
-                  </div>
-                  <div className="bg-gray-700 p-3 rounded-lg text-center">
-                    <p className="text-gray-400 text-xs">Popularity</p>
-                    <p className="text-white font-bold text-sm">{Math.round(movie.popularity)}</p>
-                  </div>
-                  <div className="bg-gray-700 p-3 rounded-lg text-center">
-                    <p className="text-gray-400 text-xs">Language</p>
-                    <p className="text-white font-bold text-sm">{(movie.original_language || 'EN').toUpperCase()}</p>
-                  </div>
+          {/* Movie Info Section - Responsive Layout */}
+          <div className="p-3 md:p-6 bg-gray-800 flex-1 overflow-y-auto">
+            {/* Title and Info */}
+            <div className="mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">{movie.title}</h1>
+              <p className="text-gray-400 text-xs md:text-sm mb-4">Year: {movie.release_date?.split('-')[0]}</p>
+              
+              {/* Quick Info - Compact on mobile */}
+              <div className="flex flex-wrap gap-2 md:gap-3 mb-4">
+                <div className="bg-gray-700 px-3 py-2 rounded text-center text-xs md:text-sm">
+                  <p className="text-yellow-400 font-bold">{movie.vote_average?.toFixed(1)}</p>
+                  <p className="text-gray-400 text-xs">IMDB</p>
                 </div>
-
-                <h3 className="text-lg font-bold text-purple-300 mb-3">📽️ About This Movie:</h3>
-                <p className="text-gray-300 text-base leading-relaxed">{movie.overview || 'No description available.'}</p>
+                <div className="bg-gray-700 px-3 py-2 rounded text-center text-xs md:text-sm">
+                  <p className="text-white font-bold">{movie.release_date}</p>
+                  <p className="text-gray-400 text-xs">Release</p>
+                </div>
+                <div className="bg-gray-700 px-3 py-2 rounded text-center text-xs md:text-sm">
+                  <p className="text-white font-bold">{(movie.original_language || 'EN').toUpperCase()}</p>
+                  <p className="text-gray-400 text-xs">Lang</p>
+                </div>
               </div>
+
+              {/* Description */}
+              <h3 className="text-sm md:text-lg font-bold text-purple-300 mb-2">About:</h3>
+              <p className="text-gray-300 text-xs md:text-base leading-relaxed line-clamp-4 md:line-clamp-none">{movie.overview || 'No description available.'}</p>
             </div>
 
             {/* Streaming Provider Selection */}
@@ -725,28 +714,7 @@ const VideoPlayer = ({ movie, onClose, onMarkAsWatched, onAddToWatchlist, isInWa
                   )}
                 </div>
 
-                {/* Quality/Source Selection for Selected Provider */}
-                {availableSources.length > 1 && (
-                  <div className="mt-3 pt-3 border-t border-gray-600">
-                    <p className="text-gray-300 text-sm mb-2">📺 Available Quality/Sources:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {availableSources.map((source, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setSelectedSource(idx)}
-                          className={`font-bold py-1 px-3 text-sm rounded-lg transition-all ${
-                            idx === selectedSource
-                              ? 'bg-yellow-500 text-black'
-                              : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
-                          }`}
-                        >
-                          {source.name} {source.isBackup && ' ⭐'}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+                              </div>
             )}
 
             {/* Action Buttons */}
